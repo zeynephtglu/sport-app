@@ -34,7 +34,11 @@ export default function ExercisesScreen() {
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.title}>{item.name}</Text>
-            <Text>{item.description ? item.description.replace(/<\/?[^>]+(>|$)/g, "") : 'Açıklama yok'}</Text>
+            <Text>
+              {item.description 
+                ? item.description.replace(/<[^>]*>?/gm, '').trim() || 'Açıklama yok' 
+                : 'Açıklama yok'}
+            </Text>
           </View>
         )}
       />
