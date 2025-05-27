@@ -1,38 +1,52 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator }  from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import HomeScreen from './screens/HomeScreen';
-import ExercisesScreen from './screens/ExercisesScreen';
-import NutritionScreen from './screens/NutritionScreen';
-
 import { Ionicons } from '@expo/vector-icons';
 
-const Tab = createBottomTabNavigator();
+import { UserProvider }      from './src/context/UserContext';
+import { ChallengeProvider } from './src/context/ChallengeContext';
+
+import WelcomeScreen         from './src/screens/WelcomeScreen';
+import HomeScreen            from './src/screens/HomeScreen';
+import LeaderboardScreen     from './src/screens/LeaderboardScreen';
+import ProfileScreen         from './src/screens/ProfileScreen';
+import ChallengeDetailScreen from './src/screens/ChallengeDetailScreen';
+
+const Stack = createStackNavigator();
+const Tab   = createBottomTabNavigator();
+
+function MainTabs() {
+  return (
+    <Tab.Navigator screenOptions={({route})=>({
+      headerShown: false,
+      tabBarIcon: ({color,size})=>{
+        const icons = { Home:'home', Leaderboard:'trophy', Profile:'person' };
+        return <Ionicons name={icons[route.name]} size={size} color={color} />;
+      },
+      tabBarActiveTintColor:'#3366FF',
+      tabBarInactiveTintColor:'gray',
+    })}>
+      <Tab.Screen name="Home"        component={HomeScreen}    />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Tab.Screen name="Profile"     component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+}
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: true,
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === 'Home') iconName = 'home-outline';
-            else if (route.name === 'Exercises') iconName = 'barbell-outline';
-            else if (route.name === 'Nutrition') iconName = 'fast-food-outline';
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Exercises" component={ExercisesScreen} />
-        <Tab.Screen name="Nutrition" component={NutritionScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <UserProvider>
+      <ChallengeProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Main"    component={MainTabs}      />
+            <Stack.Screen name="ChallengeDetail" component={ChallengeDetailScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ChallengeProvider>
+    </UserProvider>
   );
 }
