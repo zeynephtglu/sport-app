@@ -1,4 +1,3 @@
-// App.js
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,9 +10,9 @@ import { ChallengeProvider } from './src/context/ChallengeContext';
 
 import WelcomeScreen         from './src/screens/WelcomeScreen';
 import HomeScreen            from './src/screens/HomeScreen';
-import ChallengeDetailScreen from './src/screens/ChallengeDetailScreen';
 import LeaderboardScreen     from './src/screens/LeaderboardScreen';
 import ProfileScreen         from './src/screens/ProfileScreen';
+import ChallengeDetailScreen from './src/screens/ChallengeDetailScreen';
 
 const Stack = createStackNavigator();
 const Tab   = createBottomTabNavigator();
@@ -23,15 +22,15 @@ function MainTabs() {
     <Tab.Navigator screenOptions={({route})=>({
       headerShown: false,
       tabBarIcon: ({color,size})=>{
-        const icons = { Home:'home', Leaderboard:'trophy', Profile:'person' };
+        const icons = { Anasayfa:'home', Liderlik:'trophy', Profil:'person' };
         return <Ionicons name={icons[route.name]} size={size} color={color} />;
       },
       tabBarActiveTintColor:'#3366FF',
       tabBarInactiveTintColor:'gray',
     })}>
-      <Tab.Screen name="Home"        component={HomeScreen} />
-      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} />
-      <Tab.Screen name="Profile"     component={ProfileScreen} />
+      <Tab.Screen name="Anasayfa"        component={HomeScreen}    />
+      <Tab.Screen name="Liderlik" component={LeaderboardScreen} />
+      <Tab.Screen name="Profil"     component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
@@ -41,9 +40,9 @@ export default function App() {
     <UserProvider>
       <ChallengeProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Welcome">
-            <Stack.Screen name="Welcome"         component={WelcomeScreen} />
-            <Stack.Screen name="Main"            component={MainTabs} />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Main"    component={MainTabs}      />
             <Stack.Screen name="ChallengeDetail" component={ChallengeDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>

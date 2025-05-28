@@ -1,4 +1,3 @@
-// src/screens/HomeScreen.js
 import React, { useContext, useState, useMemo, useEffect } from 'react';
 import {
   FlatList,
