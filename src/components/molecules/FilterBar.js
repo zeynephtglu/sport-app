@@ -1,4 +1,3 @@
-// src/components/molecules/FilterBar.js
 import React from 'react';
 import {
   View,

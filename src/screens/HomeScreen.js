@@ -1,54 +1,81 @@
-// src/screens/HomeScreen.js
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import {
-  View,
+  SafeAreaView,
   FlatList,
   ActivityIndicator,
   Text,
-  StyleSheet
+  StyleSheet,
+  StatusBar,
+  View,
+  TouchableOpacity
 } from 'react-native';
 import { ChallengeContext } from '../context/ChallengeContext';
 import ChallengeCard from '../components/molecules/ChallengeCard';
 import FilterBar from '../components/molecules/FilterBar';
+import commonStyles from '../styles/common';
+
+const MOTIVATIONS = [
+  "Her gün yeni bir başlangıçtır!",
+  "Kendine meydan oku ve geliş!",
+  "Her adımın seni ileri taşır.",
+  "Bugün daha güçlü ol!",
+  "Sağlık, en büyük zenginliktir."
+];
 
 export default function HomeScreen({ navigation }) {
-  const { state } = useContext(ChallengeContext);
+  const { state, fetchChallenges } = useContext(ChallengeContext);
   const { challenges, loading, error } = state;
 
-  // Filtreleme için local state
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('Tüm');
+  const [motivation, setMotivation] = useState('');
 
-  // Memoize’lenmiş filtreli liste
+  useEffect(() => {
+    const idx = Math.floor(Math.random() * MOTIVATIONS.length);
+    setMotivation(MOTIVATIONS[idx]);
+  }, []);
+
+  // challenges her zaman dizi olsun
+  const list = Array.isArray(challenges) ? challenges : [];
+
   const filtered = useMemo(() => {
-    let list = challenges;
+    let temp = list;
 
-    // Metin bazlı arama
     if (search.trim()) {
       const term = search.toLowerCase();
-      list = list.filter(c => c.title.toLowerCase().includes(term));
+      temp = temp.filter(c => c.title.toLowerCase().includes(term));
     }
-
-    // Kategori bazlı filtre (örnek mantık: yurttaşın konumuna göre)
     if (selectedCat === 'Yakınındaki') {
-      // demo: first 5
-      list = list.slice(0, 5);
+      temp = temp.slice(0, 5);
     } else if (selectedCat === 'Popüler') {
-      list = [...list].sort((a, b) => b.participants.length - a.participants.length);
+      temp = [...temp].sort((a, b) => b.participants.length - a.participants.length);
     }
-
-    return list;
-  }, [challenges, search, selectedCat]);
+    return temp;
+  }, [list, search, selectedCat]);
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color="#3366FF" /></View>;
+    return (
+      <SafeAreaView style={commonStyles.safeArea}>
+        <ActivityIndicator size="large" color="#3b5998" />
+      </SafeAreaView>
+    );
   }
+
   if (error) {
-    return <View style={styles.center}><Text style={styles.errorText}>Hata: {error}</Text></View>;
+    return (
+      <SafeAreaView style={commonStyles.safeArea}>
+        <Text style={styles.error}>Veri yüklenirken bir sorun oluştu.</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={fetchChallenges}>
+          <Text style={styles.retryText}>Tekrar Dene</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={commonStyles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f2f2f2" />
+      <Text style={styles.motivation}>{motivation}</Text>
       <FilterBar
         search={search}
         onSearchChange={setSearch}
@@ -58,25 +85,50 @@ export default function HomeScreen({ navigation }) {
       <FlatList
         data={filtered}
         keyExtractor={item => item.id.toString()}
-        renderItem={({ item })=>(
+        renderItem={({ item }) => (
           <ChallengeCard
             title={item.title}
-            subtitle={`${item.participants.length} katılımcı`}
+            subtitle={`${item.participants?.length || 0} katılımcı`}
             image={item.imageUrl}
             joined={item.joined}
-            onPress={()=>navigation.navigate('ChallengeDetail',{ challengeId: item.id })}
+            onPress={() =>
+              navigation.navigate('ChallengeDetail', { challengeId: item.id })
+            }
           />
         )}
-        ItemSeparatorComponent={()=><View style={styles.separator}/>}
+        ItemSeparatorComponent={() => <View style={styles.sep} />}
         contentContainerStyle={{ paddingBottom: 16 }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{ flex:1, backgroundColor:'#fff' },
-  center:{ flex:1, justifyContent:'center', alignItems:'center' },
-  errorText:{ color:'red' },
-  separator:{ height:12 }
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 12
+  },
+  retryButton: {
+    backgroundColor: '#3b5998',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignSelf: 'center'
+  },
+  retryText: {
+    color: '#fff',
+    fontSize: 16
+  },
+  motivation: {
+    fontSize: 18,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    margin: 12,
+    color: '#3b5998'
+  },
+  sep: {
+    height: 12
+  }
 });
