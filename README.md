@@ -13,7 +13,8 @@ Mobil Programlama dersi proje ödevi: “Spor Mücadeleleri” uygulaması.
 - SafeAreaView ve useSafeAreaInsets kullanarak durum çubuğu altından başlama  
 - Motivasyon sözü, FilterBar, Liderlik Tablosu ve Profil ekranları  
 
-Kullanım
+Kullanım:
+
 1.Hoşgeldin Ekranı:
 -“Kullanıcı adınızı giriniz” alanına isim yazın.
 -İlgi alanlarınızı seçin ve Devam Et’e dokunun.
