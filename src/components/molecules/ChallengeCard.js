@@ -1,4 +1,3 @@
-// src/components/molecules/ChallengeCard.js
 import React from 'react';
 import {
   View,
@@ -15,7 +14,6 @@ export default function ChallengeCard({
   joined,
   onPress
 }) {
-  // Eğer image boş veya geçersizse placeholder resmi kullan
   const uri = image && image.length
     ? image
     : 'https://via.placeholder.com/80?text=No+Image';

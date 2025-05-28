@@ -1,4 +1,3 @@
-// src/components/molecules/ParticipantAvatarList.js
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 

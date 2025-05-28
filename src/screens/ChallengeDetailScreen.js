@@ -1,18 +1,18 @@
-// src/screens/ChallengeDetailScreen.js
 import React, { useContext } from 'react';
 import {
-  View,
   Text,
   Image,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
+  View
 } from 'react-native';
-// axios import’unu kaldırdık
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChallengeContext } from '../context/ChallengeContext';
 import ParticipantAvatarList from '../components/molecules/ParticipantAvatarList';
 
 export default function ChallengeDetailScreen({ route, navigation }) {
+  const insets = useSafeAreaInsets();
   const { challengeId } = route.params;
   const { state, dispatch } = useContext(ChallengeContext);
   const challenge = state.challenges.find(
@@ -21,25 +21,28 @@ export default function ChallengeDetailScreen({ route, navigation }) {
 
   if (!challenge) {
     return (
-      <View style={styles.center}>
+      <SafeAreaView style={styles.container}>
         <Text>Bu challenge bulunamadı.</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const handleJoin = () => {
     if (challenge.joined) {
-      Alert.alert('Zaten katıldınız!');
+      Alert.alert('Challenge’a katıldınız.');
       return;
     }
-    // Yalnızca lokal state’i güncelle
     dispatch({ type: 'JOIN', payload: challenge.id });
     Alert.alert('Challenge’a başarıyla katıldınız!');
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.back}>
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        // insets.top kadar boşluk + 8px ekstra
+        style={[styles.backButton, { top: insets.top + 8 }]}
+      >
         <Text style={styles.backText}>← Geri</Text>
       </TouchableOpacity>
 
@@ -64,28 +67,57 @@ export default function ChallengeDetailScreen({ route, navigation }) {
         onPress={handleJoin}
       >
         <Text style={styles.buttonText}>
-          {challenge.joined ? 'Katıldın ✔' : 'Katıl'}
+          {challenge.joined ? 'Katıldınız' : 'Katıl'}
         </Text>
       </TouchableOpacity>
 
       <Text style={styles.partTitle}>Katılımcılar</Text>
       <ParticipantAvatarList participants={challenge.participants} />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container:         { flex:1, backgroundColor:'#fff', padding:16 },
-  center:            { flex:1, justifyContent:'center', alignItems:'center' },
-  back:              { marginBottom:12 },
-  backText:          { color:'#3366FF', fontSize:16 },
-  image:             { width:'100%', height:200, borderRadius:12, marginBottom:16 },
-  placeholderImage:  { width:'100%', height:200, backgroundColor:'#eee', borderRadius:12, marginBottom:16 },
-  title:             { fontSize:22, fontWeight:'600', marginBottom:8 },
-  date:              { fontSize:14, color:'#666', marginBottom:12 },
-  description:       { fontSize:16, lineHeight:22, marginBottom:20 },
-  button:            { backgroundColor:'#3366FF', padding:12, borderRadius:12, alignItems:'center', marginBottom:24 },
-  buttonJoined:      { backgroundColor:'#aaa' },
-  buttonText:        { color:'#fff', fontSize:16, fontWeight:'500' },
-  partTitle:         { fontSize:18, fontWeight:'500', marginBottom:8 }
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    paddingHorizontal: 16
+  },
+  backButton: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 10
+  },
+  backText: {
+    color: '#3366FF',
+    fontSize: 16
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginTop: 48,
+    marginBottom: 16
+  },
+  placeholderImage: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#eee',
+    borderRadius: 12,
+    marginTop: 48,
+    marginBottom: 16
+  },
+  title: { fontSize: 22, fontWeight: '600', marginBottom: 8 },
+  date: { fontSize: 14, color: '#666', marginBottom: 12 },
+  description: { fontSize: 16, lineHeight: 22, marginBottom: 20 },
+  button: {
+    backgroundColor: '#3b5998',
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 24
+  },
+  buttonJoined: { backgroundColor: '#aaa' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
+  partTitle: { fontSize: 18, fontWeight: '500', marginBottom: 8 }
 });
