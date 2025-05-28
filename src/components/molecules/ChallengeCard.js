@@ -15,13 +15,14 @@ export default function ChallengeCard({
   joined,
   onPress
 }) {
+  // Eğer image boş veya geçersizse placeholder resmi kullan
+  const uri = image && image.length
+    ? image
+    : 'https://via.placeholder.com/80?text=No+Image';
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      {image ? (
-        <Image source={{ uri: image }} style={styles.image} />
-      ) : (
-        <View style={styles.placeholderImage} />
-      )}
+      <Image source={{ uri }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
@@ -47,11 +48,6 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80
-  },
-  placeholderImage: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#eee'
   },
   info: {
     flex: 1,

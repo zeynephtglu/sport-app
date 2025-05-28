@@ -37,7 +37,7 @@ export function ChallengeProvider({ children }) {
       dispatch({ type: 'LOADING' });
       try {
         // TODO: kendi endpoint'inize göre URL'i değiştirin
-        const res = await axios.get('https://mocki.io/v1/bdab5757-0dc3-4bd5-a43a-04f6b85f4a26');
+        const res = await axios.get('https://mocki.io/v1/2b545be1-9316-48fe-8388-16789b8165ad');
         dispatch({ type: 'FETCH_SUCCESS', payload: res.data });
       } catch (err) {
         dispatch({ type: 'FETCH_ERROR', payload: err.message });
