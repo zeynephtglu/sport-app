@@ -1,27 +1,51 @@
+// src/screens/ChallengeDetailScreen.js
 import React, { useContext } from 'react';
 import {
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   Alert,
-  View
+  View,
+  Image,
+  StatusBar
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChallengeContext } from '../context/ChallengeContext';
 import ParticipantAvatarList from '../components/molecules/ParticipantAvatarList';
+import commonStyles from '../styles/common';
+
+// HomeScreen ile tutarlı görseller için aynı konfigürasyonu kullanıyoruz
+const IMAGE_CONFIG = {
+  '10K Adım Günü':
+    'https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg',
+  'Haftalık Yoga':
+    'https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg',
+  'Sabah Koşusu':
+    'https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg',
+  'Haftada 4 Gün Fitness':
+    'https://images.pexels.com/photos/2261485/pexels-photo-2261485.jpeg',
+  'Evde HIIT Challenge':
+    'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg',
+  'Pilates ve Core Güçlendirme':
+    'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
+  'Akşam Bisiklet Turu':
+    'https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg',
+  'Weekend Hike':
+    'https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg'
+};
 
 export default function ChallengeDetailScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { challengeId } = route.params;
   const { state, dispatch } = useContext(ChallengeContext);
+
   const challenge = state.challenges.find(
     c => c.id.toString() === challengeId.toString()
   );
 
   if (!challenge) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={commonStyles.safeArea}>
         <Text>Bu challenge bulunamadı.</Text>
       </SafeAreaView>
     );
@@ -36,21 +60,19 @@ export default function ChallengeDetailScreen({ route, navigation }) {
     Alert.alert('Challenge’a başarıyla katıldınız!');
   };
 
+  const img = IMAGE_CONFIG[challenge.title] || challenge.imageUrl;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={commonStyles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor={commonStyles.safeArea.backgroundColor} />
       <TouchableOpacity
         onPress={() => navigation.goBack()}
-        // insets.top kadar boşluk + 8px ekstra
         style={[styles.backButton, { top: insets.top + 8 }]}
       >
         <Text style={styles.backText}>← Geri</Text>
       </TouchableOpacity>
 
-      {challenge.imageUrl ? (
-        <Image source={{ uri: challenge.imageUrl }} style={styles.image} />
-      ) : (
-        <View style={styles.placeholderImage} />
-      )}
+      <Image source={{ uri: img }} style={styles.image} />
 
       <Text style={styles.title}>{challenge.title}</Text>
       {challenge.startDate && challenge.endDate && (
@@ -78,11 +100,6 @@ export default function ChallengeDetailScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f2f2f2',
-    paddingHorizontal: 16
-  },
   backButton: {
     position: 'absolute',
     left: 16,
@@ -95,14 +112,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
-    marginTop: 48,
-    marginBottom: 16
-  },
-  placeholderImage: {
-    width: '100%',
-    height: 200,
-    backgroundColor: '#eee',
     borderRadius: 12,
     marginTop: 48,
     marginBottom: 16

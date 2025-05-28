@@ -1,6 +1,6 @@
+// src/screens/HomeScreen.js
 import React, { useContext, useState, useMemo, useEffect } from 'react';
 import {
-  SafeAreaView,
   FlatList,
   ActivityIndicator,
   Text,
@@ -9,6 +9,7 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChallengeContext } from '../context/ChallengeContext';
 import ChallengeCard from '../components/molecules/ChallengeCard';
 import FilterBar from '../components/molecules/FilterBar';
@@ -21,6 +22,26 @@ const MOTIVATIONS = [
   "Bugün daha güçlü ol!",
   "Sağlık, en büyük zenginliktir."
 ];
+
+// Başlığa özel güncellenmiş görsel URL eşlemesi
+const IMAGE_CONFIG = {
+  '10K Adım Günü':
+    'https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg',          // parkta yürüyen sporcu
+  'Haftalık Yoga':
+    'https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg',
+  'Sabah Koşusu':
+    'https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg',          // sabah koşan sporcu
+  'Haftada 4 Gün Fitness':
+    'https://images.pexels.com/photos/2261485/pexels-photo-2261485.jpeg',
+  'Evde HIIT Challenge':
+    'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg',          // evde egzersiz
+  'Pilates ve Core Güçlendirme':
+    'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
+  'Akşam Bisiklet Turu':
+    'https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg',            // dışarıda bisiklet
+  'Weekend Hike':
+    'https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg'             // yürüyüş yapan doğa
+};
 
 export default function HomeScreen({ navigation }) {
   const { state, fetchChallenges } = useContext(ChallengeContext);
@@ -35,12 +56,10 @@ export default function HomeScreen({ navigation }) {
     setMotivation(MOTIVATIONS[idx]);
   }, []);
 
-  // challenges her zaman dizi olsun
   const list = Array.isArray(challenges) ? challenges : [];
 
   const filtered = useMemo(() => {
     let temp = list;
-
     if (search.trim()) {
       const term = search.toLowerCase();
       temp = temp.filter(c => c.title.toLowerCase().includes(term));
@@ -74,7 +93,10 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={commonStyles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f2f2f2" />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={commonStyles.safeArea.backgroundColor || '#f2f2f2'}
+      />
       <Text style={styles.motivation}>{motivation}</Text>
       <FilterBar
         search={search}
@@ -89,7 +111,7 @@ export default function HomeScreen({ navigation }) {
           <ChallengeCard
             title={item.title}
             subtitle={`${item.participants?.length || 0} katılımcı`}
-            image={item.imageUrl}
+            image={IMAGE_CONFIG[item.title] || item.imageUrl}
             joined={item.joined}
             onPress={() =>
               navigation.navigate('ChallengeDetail', { challengeId: item.id })
